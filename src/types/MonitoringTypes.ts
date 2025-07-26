@@ -26,7 +26,7 @@ export enum SessionStatus {
   PAUSED: 'paused',
 }
 
-const MonitorSessionSchema : CollectionSchema = {
+export const MonitorSessionSchema : CollectionSchema = {
     name: Collections.MONITORING_SESSIONS,
     type: ColSchemaType.BASE,
     schema: [
@@ -103,7 +103,7 @@ export interface SessionTask extends BaseRecord{
   timeSpent?: number;
 }
 
-const SessionTaskSchema: CollectionSchema = {
+export const SessionTaskSchema: CollectionSchema = {
   name: Collections.SESSION_TASK,
   schema: [
     { 

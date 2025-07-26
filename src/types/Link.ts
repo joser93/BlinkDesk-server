@@ -23,7 +23,7 @@ export interface CreateLinkRequest {
   url: string;
 }
 
-const LinkSchema : CollectionSchema = {
+export const LinkSchema : CollectionSchema = {
     name: Collections.LINKS,
     type: ColSchemaType.BASE,
     schema: [

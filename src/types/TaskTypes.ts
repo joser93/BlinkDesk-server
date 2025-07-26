@@ -20,9 +20,9 @@ export interface TaskValidation {
   max?: number;
 }
 
-const TaskCollectionSchema : CollectionSchema = {
+export const TaskCollectionSchema : CollectionSchema = {
     name: Collections.TASKS,
-    type: 'base',
+    type: ColSchemaType.BASE,
     schema: [
       {
         name: 'link',

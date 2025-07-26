@@ -19,7 +19,7 @@ export interface Workspace extends BaseRecord {
   }
 }
 
-const WorkspaceSchema: CollectionSchema = {
+export const WorkspaceSchema: CollectionSchema = {
     name: Collections.WORKSPACES,
     type: ColSchemaType.BASE,
     schema: [
@@ -124,7 +124,7 @@ export enum ShareRole {
   ADMIN = 'admin'
 }
 
-const WorkspaceShareColSchema : CollectionSchema = {
+export const WorkspaceShareColSchema : CollectionSchema = {
     name: Collections.WORKSPACE_SHARING,
     type: ColSchemaType.BASE,
     schema: [

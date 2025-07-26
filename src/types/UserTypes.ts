@@ -11,7 +11,7 @@ export interface User extends BaseRecord {
   password: string;
 }
 
-const UserSchema: CollectionSchema  = {
+export const UserSchema: CollectionSchema  = {
   name: Collections.USERS,
   type: ColSchemaType.AUTH,
   schema: [
