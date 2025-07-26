@@ -1,35 +1,145 @@
+import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
-import { Link } from "./Link";
-import { Task } from "./TaskTypes.ts";
-import { UserSettings } from "./UserTypes";
+import { User } from "./UserTypes";
 import { Workspace } from "./WorkspaceType";
 
 // Monitoring types
 export interface MonitoringSession extends BaseRecord {
-  workspace: Workspace; // Workspace ID
-  user: UserSettings; // User ID
+  workspaceId: string; // Workspace ID
+  userId: string; // User ID
   startedAt: Date;
   completedAt?: Date;
   status: SessionStatus;
-  totalTasks: number;
-  completedTasks: number;
   data: SessionData;
+  expand?: {
+    workspace?: Workspace;
+    user?: User;
+  },
+  sessionTasks?: SessionTask[];
 }
+
+const MonitorSessionSchema : CollectionSchema = {
+    name: Collections.MONITORING_SESSIONS,
+    type: ColSchemaType.BASE,
+    schema: [
+      {
+        name: 'workspace',
+        type: SchemaType.RELATION,
+        required: true,
+        options: {
+          collectionId: Collections.WORKSPACES,
+          cascadeDelete: true,
+          maxSelect: 1
+        } as SchemaRelationOptions
+      },
+      {
+        name: 'user',
+        type: SchemaType.RELATION,
+        required: true,
+        options: {
+          collectionId: Collections.USERS,
+          cascadeDelete: true,
+          maxSelect: 1
+        } as SchemaRelationOptions
+      },
+      {
+        name: 'startedAt',
+        type: SchemaType.DATE,
+        required: true
+      },
+      {
+        name: 'completedAt',
+        type: SchemaType.DATE,
+        required: false
+      },
+      {
+        name: 'status',
+        type: SchemaType.SELECT,
+        required: true,
+        options: {
+          values: ['active', 'completed', 'abandoned', 'paused']
+        } as SelectSchemaOptions
+      }
+      {
+        name: 'data',
+        type: SchemaType.JSON,
+        required: true
+      }
+    ],
+    indexes: [
+      'CREATE INDEX idx_monitoring_workspace ON monitoring_sessions (workspace)',
+      'CREATE INDEX idx_monitoring_user ON monitoring_sessions (user)',
+      'CREATE INDEX idx_monitoring_status ON monitoring_sessions (status)',
+      'CREATE INDEX idx_monitoring_started ON monitoring_sessions (startedAt)'
+    ],
+    listRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id || (@request.auth.id ?~ workspace.workspace_sharing_via_workspace.user && workspace.workspace_sharing_via_workspace.permissions.canViewStats = true)',
+    viewRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id || (@request.auth.id ?~ workspace.workspace_sharing_via_workspace.user && workspace.workspace_sharing_via_workspace.permissions.canViewStats = true)',
+    createRule: '@request.auth.id != "" && (@request.auth.id ?= workspace.owner || workspace.isPublic = true || @request.auth.id ?~ workspace.workspace_sharing_via_workspace.user)',
+    updateRule: 'user = @request.auth.id',
+    deleteRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id'
+  }
 
 export type SessionStatus = 'active' | 'completed' | 'abandoned' | 'paused';
 
 export interface SessionData {
-  SessionTasks: SessionTask[];
   totalTime?: number; // in milliseconds
   averageTimePerTask?: number;
   notes?: string;
 }
 
-export interface SessionTask {
-  
-  taskId: Task;
-  linkId: Link;
+export interface SessionTask extends BaseRecord{
+  sessionId: string;
+  taskId: string;
+  linkId: string;
   isCompleted: boolean;
+  reason: string;
   completedAt?: Date;
   timeSpent?: number;
+}
+
+const SessionTaskSchema: CollectionSchema = {
+  name: Collections.SESSION_TASK,
+  schema: [
+    { 
+      name: "session",
+      type: SchemaType.RELATION,
+      required: true,
+      options: {
+        collectionId: Collections.MONITORING_SESSIONS,
+        maxSelect: 1
+      } as SchemaRelationOptions
+    },
+    {
+      name: "task",
+      type: SchemaType.RELATION,
+      required: true,
+      options: {
+        collectionId: Collections.TASKS,
+      } as SchemaRelationOptions
+    },
+    {
+      name: "link",
+      type: SchemaType.RELATION,
+      required: true,
+      options: {
+        collectionId: Collections.LINKS,
+      } as SchemaRelationOptions
+    },
+    {
+      name: "isCompleted",
+      type: SchemaType.BOOLEAN
+    },
+    {
+      name: "reason",
+      type: SchemaType.TEXT
+    },
+    {
+      name: "completedAt",
+      type: SchemaType.DATE
+    },
+    {
+      name: "timeSpent",
+      type: SchemaType.NUMBER
+    }
+  ]
 }

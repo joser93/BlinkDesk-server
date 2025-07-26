@@ -66,6 +66,7 @@ export const Collections = {
   TASKS: 'tasks',
   WORKSPACE_SHARING: 'workspace_sharing',
   MONITORING_SESSIONS: 'monitoring_sessions',
+  SESSION_TASK: 'session_task',
 } as const;
 
 export type CollectionName = typeof Collections[keyof typeof Collections];
