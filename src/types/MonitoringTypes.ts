@@ -1,3 +1,4 @@
+import { object } from "zod";
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
 import { User } from "./UserTypes";
@@ -16,6 +17,13 @@ export interface MonitoringSession extends BaseRecord {
     user?: User;
   },
   sessionTasks?: SessionTask[];
+}
+
+export enum SessionStatus {
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+  ABANDONED: 'abandoned',
+  PAUSED: 'paused',
 }
 
 const MonitorSessionSchema : CollectionSchema = {
@@ -57,7 +65,7 @@ const MonitorSessionSchema : CollectionSchema = {
         type: SchemaType.SELECT,
         required: true,
         options: {
-          values: ['active', 'completed', 'abandoned', 'paused']
+          values: Object.keys(SessionStatus).map( (i) => SessionStatus[i] )
         } as SelectSchemaOptions
       }
       {
@@ -78,8 +86,6 @@ const MonitorSessionSchema : CollectionSchema = {
     updateRule: 'user = @request.auth.id',
     deleteRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id'
   }
-
-export type SessionStatus = 'active' | 'completed' | 'abandoned' | 'paused';
 
 export interface SessionData {
   totalTime?: number; // in milliseconds

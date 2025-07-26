@@ -118,6 +118,12 @@ export interface WorkspaceSharing extends BaseRecord {
   }
 }
 
+export enum ShareRole {
+  VIEWER = 'viewer',
+  COLLABORATOR = 'collaborator',
+  ADMIN = 'admin'
+}
+
 const WorkspaceShareColSchema : CollectionSchema = {
     name: Collections.WORKSPACE_SHARING,
     type: ColSchemaType.BASE,
@@ -147,7 +153,7 @@ const WorkspaceShareColSchema : CollectionSchema = {
         type: 'select',
         required: true,
         options: {
-          values: ['viewer', 'collaborator', 'admin']
+          values: Object.keys(ShareRole).map( (i) => ShareRole[i] )
         }
       },
       {
@@ -182,8 +188,6 @@ const WorkspaceShareColSchema : CollectionSchema = {
     updateRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id',
     deleteRule: '@request.auth.id ?= workspace.owner || user = @request.auth.id'
   };
-
-export type ShareRole = 'viewer' | 'collaborator' | 'admin';
 
 export interface SharePermissions {
   canView: boolean;
