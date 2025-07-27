@@ -3,4 +3,5 @@ export interface BaseRecord {
     created: Date;
     updated: Date;
     isDeleted: boolean;
+    versionNumber: number;
 }
