@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
 import { env } from './environment.js';
-import { logger } from '@/utils/logger.js';
+import { logger } from '../utils/logger';
 
 // PocketBase client instance
 export const pb = new PocketBase(env.POCKETBASE_URL);

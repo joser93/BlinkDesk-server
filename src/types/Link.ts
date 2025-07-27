@@ -1,5 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
+import { CollectionSchema, ColSchemaType, SchemaType } from "./CollectionSchema";
 import { Task } from "./TaskTypes";
 import { Workspace } from "./WorkspaceType";
 
@@ -26,22 +27,20 @@ export interface CreateLinkRequest {
 export const LinkSchema : CollectionSchema = {
     name: Collections.LINKS,
     type: ColSchemaType.BASE,
-    schema: [
+    fields: [
       {
         name: 'workspace',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.WORKSPACES,
-          cascadeDelete: true,
-          maxSelect: 1
-        }
-      },
+        collectionName: Collections.WORKSPACES,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'title',
         type: SchemaType.TEXT,
         required: true,
-        options: { max: 200 }
+        max: 200
       },
       {
         name: 'url',
@@ -52,7 +51,7 @@ export const LinkSchema : CollectionSchema = {
         name: 'order',
         type: SchemaType.NUMBER,
         required: true,
-        options: { min: 0 }
+        min: 0
       },
       {
         name: 'isActive',
@@ -63,13 +62,12 @@ export const LinkSchema : CollectionSchema = {
         name: 'favicon',
         type: SchemaType.TEXT,
         required: false,
-        options: { max: 500 }
+        max: 500 
       }
     ],
     indexes: [
       'CREATE INDEX idx_links_workspace ON links (workspace)',
-      'CREATE INDEX idx_links_order ON links (`order`)',
-      'CREATE INDEX idx_links_category ON links (category)'
+      'CREATE INDEX idx_links_order ON links (`order`)'
     ],
     listRule: '@request.auth.id ?= workspace.owner || workspace.isPublic = true || @request.auth.id ?~ workspace.workspace_sharing_via_workspace.user',
     viewRule: '@request.auth.id ?= workspace.owner || workspace.isPublic = true || @request.auth.id ?~ workspace.workspace_sharing_via_workspace.user',

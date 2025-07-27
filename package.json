@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
-    "typegen": "pocketbase-typegen --db ./pb_data/data.db --out ./src/lib/types/pocketbase-types.ts",
+    "setup:pb": "bun run src/scripts/setup-pocketbase.ts"
   },
   "keywords": [
     "workspace",

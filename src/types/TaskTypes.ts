@@ -1,5 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
+import { BasicSchemaOptions, CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType } from "./CollectionSchema";
 import { Link } from "./Link";
 import { MonitoringSession } from "./MonitoringTypes";
 
@@ -23,41 +24,37 @@ export interface TaskValidation {
 export const TaskCollectionSchema : CollectionSchema = {
     name: Collections.TASKS,
     type: ColSchemaType.BASE,
-    schema: [
+    fields: [
       {
         name: 'link',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.LINKS,
-          cascadeDelete: true,
-          maxSelect: 1
-        }
-      },
+        collectionName: Collections.LINKS,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'title',
         type: SchemaType.TEXT,
         required: true,
-        options: { max: 200 }
-      },
+        max: 200
+      } as BasicSchemaOptions,
       {
         name: 'description',
         type: SchemaType.TEXT,
-        required: false,
-        options: { max: 1000 }
-      },
+        max: 1000
+      } as BasicSchemaOptions,
       {
         name: 'isRequired',
         type: SchemaType.BOOLEAN,
         required: true,
-        options: {}
       },
       {
         name: 'order',
         type: SchemaType.NUMBER,
         required: true,
-        options: { min: 0 }
-      },
+        min: 0
+      } as BasicSchemaOptions,
       {
         name: 'validations',
         type: SchemaType.JSON,

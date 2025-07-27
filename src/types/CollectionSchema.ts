@@ -1,16 +1,17 @@
-interface CollectionSchema {
+export interface CollectionSchema {
   name: string;
   type: ColSchemaType | ColSchemaType.BASE;
-  schema: Schema[];
+  fields: Schema[];
   indexes?: string[];
   listRule?: string | null;
   viewRule?: string | null;
   createRule?: string | null;
   updateRule?: string | null;
   deleteRule?: string | null;
+  passwordAuth?: PassAuthConfig | null;
 }
 
-enum ColSchemaType {
+export enum ColSchemaType {
     AUTH = "auth",
     BASE = "base"
 }
@@ -19,10 +20,10 @@ interface Schema {
     type: SchemaType;
     name: string;
     required?: boolean | false;
-    options?: SchemaOptions;
+    unique?: boolean;
 }
 
-enum SchemaType {
+export enum SchemaType {
     TEXT = "text",
     RELATION = "relation",
     JSON = "json",
@@ -34,27 +35,37 @@ enum SchemaType {
     SELECT = "select"
 }
 
-interface SchemaRelationOptions {
-    collectionId: string;
+export interface SchemaRelationOptions extends Schema {
+    collectionId?: string;
+    collectionName: string;
     cascadeDelete?: boolean;
     maxSelect: number;
 }
 
-interface BasicSchemaOptions {
+export interface BasicSchemaOptions extends Schema {
     max?: number;
     min?: number;
 }
 
-interface FileSchemaOptions {
+export interface FileSchemaOptions extends Schema {
     maxSelect: number;
     maxSize: number;
 }
 
-interface SelectSchemaOptions {
+export interface SelectSchemaOptions extends Schema {
     values: string[];
 }
 
-type SchemaOptions = SchemaRelationOptions | 
+export interface PassAuthConfig {
+    enabled: boolean,
+    identifyFields: string[];
+}
+
+export type SchemaStruct = SchemaRelationOptions | 
                      BasicSchemaOptions | 
                      SelectSchemaOptions | 
                      FileSchemaOptions;
+
+export function isSchemaRelationOptions(schema: Schema): schema is SchemaRelationOptions {
+    return schema.type === SchemaType.RELATION;
+}

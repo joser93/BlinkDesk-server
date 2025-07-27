@@ -1,5 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
+import { CollectionSchema, ColSchemaType, SchemaType } from "./CollectionSchema";
 
 export interface User extends BaseRecord {
   email: string;
@@ -14,7 +15,7 @@ export interface User extends BaseRecord {
 export const UserSchema: CollectionSchema  = {
   name: Collections.USERS,
   type: ColSchemaType.AUTH,
-  schema: [
+  fields: [
     {
       name: "name",
       type: SchemaType.TEXT,
@@ -37,7 +38,7 @@ export const UserSchema: CollectionSchema  = {
       type: SchemaType.JSON,
       required: false
     }
-  ],
+  ]
   ,
   indexes: ['CREATE UNIQUE INDEX idx_users_email ON users (email)'],
   listRule: 'id = @request.auth.id',

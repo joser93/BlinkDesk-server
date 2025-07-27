@@ -3,6 +3,7 @@ import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
 import { User } from "./UserTypes";
 import { Workspace } from "./WorkspaceType";
+import { CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType, SelectSchemaOptions } from "./CollectionSchema";
 
 // Monitoring types
 export interface MonitoringSession extends BaseRecord {
@@ -20,36 +21,32 @@ export interface MonitoringSession extends BaseRecord {
 }
 
 export enum SessionStatus {
-  ACTIVE: 'active',
-  COMPLETED: 'completed',
-  ABANDONED: 'abandoned',
-  PAUSED: 'paused',
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  ABANDONED = 'abandoned',
+  PAUSED = 'paused',
 }
 
 export const MonitorSessionSchema : CollectionSchema = {
     name: Collections.MONITORING_SESSIONS,
     type: ColSchemaType.BASE,
-    schema: [
+    fields: [
       {
         name: 'workspace',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.WORKSPACES,
-          cascadeDelete: true,
-          maxSelect: 1
-        } as SchemaRelationOptions
-      },
+        collectionName: Collections.WORKSPACES,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'user',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.USERS,
-          cascadeDelete: true,
-          maxSelect: 1
-        } as SchemaRelationOptions
-      },
+        collectionName: Collections.USERS,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'startedAt',
         type: SchemaType.DATE,
@@ -58,16 +55,13 @@ export const MonitorSessionSchema : CollectionSchema = {
       {
         name: 'completedAt',
         type: SchemaType.DATE,
-        required: false
       },
       {
         name: 'status',
         type: SchemaType.SELECT,
         required: true,
-        options: {
-          values: Object.keys(SessionStatus).map( (i) => SessionStatus[i] )
-        } as SelectSchemaOptions
-      }
+        values: Object.keys(SessionStatus).map( (i) => SessionStatus[i] )
+      } as SelectSchemaOptions,
       {
         name: 'data',
         type: SchemaType.JSON,
@@ -105,32 +99,27 @@ export interface SessionTask extends BaseRecord{
 
 export const SessionTaskSchema: CollectionSchema = {
   name: Collections.SESSION_TASK,
-  schema: [
+  type: ColSchemaType.BASE,
+  fields: [
     { 
       name: "session",
       type: SchemaType.RELATION,
       required: true,
-      options: {
-        collectionId: Collections.MONITORING_SESSIONS,
-        maxSelect: 1
-      } as SchemaRelationOptions
-    },
+      collectionName: Collections.MONITORING_SESSIONS,
+      maxSelect: 1
+    }as SchemaRelationOptions,
     {
       name: "task",
       type: SchemaType.RELATION,
       required: true,
-      options: {
-        collectionId: Collections.TASKS,
-      } as SchemaRelationOptions
-    },
+      collectionName: Collections.TASKS,
+    } as SchemaRelationOptions,
     {
       name: "link",
       type: SchemaType.RELATION,
       required: true,
-      options: {
-        collectionId: Collections.LINKS,
-      } as SchemaRelationOptions
-    },
+      collectionName: Collections.LINKS,
+    } as SchemaRelationOptions,
     {
       name: "isCompleted",
       type: SchemaType.BOOLEAN

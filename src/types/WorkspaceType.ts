@@ -1,5 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
+import { CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType, SelectSchemaOptions } from "./CollectionSchema";
 import { Link } from "./Link";
 import { User } from "./UserTypes";
 
@@ -22,68 +23,58 @@ export interface Workspace extends BaseRecord {
 export const WorkspaceSchema: CollectionSchema = {
     name: Collections.WORKSPACES,
     type: ColSchemaType.BASE,
-    schema: [
+    fields: [
       {
         name: 'name',
         type: SchemaType.TEXT,
         required: true,
-        options: { max: 100 }
+        max: 100
       },
       {
         name: 'description',
         type: SchemaType.TEXT,
         required: false,
-        options: { max: 500 }
+        max: 500
       },
       {
         name: 'owner',
         type: SchemaType.RELATION,
         required: true,
-        options: { 
-          collectionId: Collections.USERS,
-          cascadeDelete: true,
-          maxSelect: 1
-        }
+        collectionName: Collections.USERS,
+        cascadeDelete: true,
+        maxSelect: 1
       },
       {
         name: 'color',
         type: SchemaType.TEXT,
         required: false,
-        options: { max: 7 }
+        max: 7
       },
       {
         name: 'icon',
         type: SchemaType.TEXT,
-        required: false,
-        options: { max: 50 }
+        max: 50
       },
       {
         name: 'isPublic',
         type: SchemaType.BOOLEAN,
         required: true,
-        options: {}
       },
       {
         name: 'settings',
         type: SchemaType.JSON,
         required: true,
-        options: {}
       },
       {
         name: 'stats',
         type: SchemaType.JSON,
-        required: false,
-        options: {}
       }
     ],
     indexes: [
       'CREATE INDEX idx_workspaces_owner ON workspaces (owner)',
       'CREATE INDEX idx_workspaces_public ON workspaces (isPublic)'
     ],
-    listRule: 'owner = @request.auth.id || isPublic = true || @request.auth.id ?~ workspace_sharing_via_workspace.user',
-    viewRule: 'owner = @request.auth.id || isPublic = true || @request.auth.id ?~ workspace_sharing_via_workspace.user',
     createRule: '@request.auth.id != ""',
-    updateRule: 'owner = @request.auth.id || (@request.auth.id ?~ workspace_sharing_via_workspace.user && workspace_sharing_via_workspace.permissions.canEdit = true)',
     deleteRule: 'owner = @request.auth.id'
   }
 
@@ -127,55 +118,45 @@ export enum ShareRole {
 export const WorkspaceShareColSchema : CollectionSchema = {
     name: Collections.WORKSPACE_SHARING,
     type: ColSchemaType.BASE,
-    schema: [
+    fields: [
       {
         name: 'workspace',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.WORKSPACES,
-          cascadeDelete: true,
-          maxSelect: 1
-        }
-      },
+        collectionName: Collections.WORKSPACES,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'user',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.USERS,
-          cascadeDelete: true,
-          maxSelect: 1
-        }
-      },
+        collectionName: Collections.USERS,
+        cascadeDelete: true,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'role',
-        type: 'select',
+        type: SchemaType.SELECT,
         required: true,
-        options: {
-          values: Object.keys(ShareRole).map( (i) => ShareRole[i] )
-        }
-      },
+        values: Object.keys(ShareRole).map( (i) => ShareRole[i] )
+        
+      } as SelectSchemaOptions,
       {
         name: 'permissions',
         type: SchemaType.JSON,
         required: true,
-        options: {}
       },
       {
         name: 'invitedBy',
         type: SchemaType.RELATION,
         required: true,
-        options: {
-          collectionId: Collections.USERS,
-          maxSelect: 1
-        }
-      },
+        collectionName: Collections.USERS,
+        maxSelect: 1
+      } as SchemaRelationOptions,
       {
         name: 'acceptedAt',
-        type: SchemaType.DATE,
-        required: false,
-        options: {}
+        type: SchemaType.DATE
       }
     ],
     indexes: [
