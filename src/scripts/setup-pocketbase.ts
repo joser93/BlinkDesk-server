@@ -6,7 +6,7 @@ import { WorkspaceSchema, WorkspaceShareColSchema } from "../types/WorkspaceType
 import { LinkSchema } from "../types/Link";
 import { TaskCollectionSchema } from "../types/TaskTypes";
 import { MonitorSessionSchema, SessionTaskSchema } from "../types/MonitoringTypes";
-import { CollectionSchema, isSchemaRelationOptions, SchemaRelationOptions, SchemaType } from "../types/CollectionSchema";
+import { Schema, AutoDateSchemaOptions, CollectionSchema, isSchemaRelationOptions, SchemaRelationOptions, SchemaType, BasicSchemaOptions } from "../types/CollectionSchema";
 
 const schemas: CollectionSchema[] = [
     UserSchema,
@@ -17,6 +17,38 @@ const schemas: CollectionSchema[] = [
     MonitorSessionSchema,
     SessionTaskSchema
 ]
+
+const autoDateFields: AutoDateSchemaOptions[] = [
+  {
+    name: "created",
+    type: SchemaType.AUTODATE,
+    onCreate: true,
+    onUpdate: false
+  },
+  {
+    name: "updated",
+    type: SchemaType.AUTODATE,
+    onCreate: true,
+    onUpdate: true
+  }
+];
+
+const commonFields: Schema[] = [
+  {
+    name: "isDeleted",
+    type: SchemaType.BOOLEAN,
+    required: true,
+    defaultValue: false
+  }
+];
+
+const versionField: BasicSchemaOptions = {
+  name: "versionNumber",
+  type: SchemaType.NUMBER,
+  required: true,
+  defaultValue: 1,
+  min: 0
+}
 
 async function setupPocketBase(): Promise<void> {
   try {
@@ -33,6 +65,12 @@ async function setupPocketBase(): Promise<void> {
     const existingNames = existingCollections.map(c => c.name);
 
     for (const schema of schemas) {
+
+      if ( ! schema.fields.find( f => f.name === versionField.name ) ){
+        schema.fields.push(versionField);
+      }
+
+      schema.fields.push(...commonFields, ...autoDateFields);
       try {
 
         let test : SchemaRelationOptions[] = schema.fields.filter( isSchemaRelationOptions );

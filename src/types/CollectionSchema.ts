@@ -16,7 +16,7 @@ export enum ColSchemaType {
     BASE = "base"
 }
 
-interface Schema {
+export interface Schema {
     type: SchemaType;
     name: string;
     required?: boolean | false;
@@ -32,7 +32,8 @@ export enum SchemaType {
     URL = "url",
     NUMBER = "number",
     DATE = "date",
-    SELECT = "select"
+    SELECT = "select",
+    AUTODATE = 'autodate'
 }
 
 export interface SchemaRelationOptions extends Schema {
@@ -54,6 +55,11 @@ export interface FileSchemaOptions extends Schema {
 
 export interface SelectSchemaOptions extends Schema {
     values: string[];
+}
+
+export interface AutoDateSchemaOptions extends Schema {
+    onCreate?: boolean;
+    onUpdate?: boolean;
 }
 
 export interface PassAuthConfig {
