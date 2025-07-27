@@ -1,6 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
-import { CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType, SelectSchemaOptions } from "./CollectionSchema";
+import { BasicSchemaOptions, CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType, SelectSchemaOptions } from "./CollectionSchema";
 import { Link } from "./Link";
 import { User } from "./UserTypes";
 
@@ -29,13 +29,13 @@ export const WorkspaceSchema: CollectionSchema = {
         type: SchemaType.TEXT,
         required: true,
         max: 100
-      },
+      } as BasicSchemaOptions,
       {
         name: 'description',
         type: SchemaType.TEXT,
         required: false,
         max: 500
-      },
+      } as BasicSchemaOptions,
       {
         name: 'owner',
         type: SchemaType.RELATION,
@@ -43,18 +43,18 @@ export const WorkspaceSchema: CollectionSchema = {
         collectionName: Collections.USERS,
         cascadeDelete: true,
         maxSelect: 1
-      },
+      } as SchemaRelationOptions,
       {
         name: 'color',
         type: SchemaType.TEXT,
         required: false,
         max: 7
-      },
+      } as BasicSchemaOptions,
       {
         name: 'icon',
         type: SchemaType.TEXT,
         max: 50
-      },
+      } as BasicSchemaOptions,
       {
         name: 'isPublic',
         type: SchemaType.BOOLEAN,

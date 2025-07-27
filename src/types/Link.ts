@@ -1,6 +1,6 @@
 import { Collections } from "../config/database";
 import { BaseRecord } from "./BaseRecord";
-import { CollectionSchema, ColSchemaType, SchemaType } from "./CollectionSchema";
+import { BasicSchemaOptions, CollectionSchema, ColSchemaType, SchemaRelationOptions, SchemaType } from "./CollectionSchema";
 import { Task } from "./TaskTypes";
 import { Workspace } from "./WorkspaceType";
 
@@ -41,7 +41,7 @@ export const LinkSchema : CollectionSchema = {
         type: SchemaType.TEXT,
         required: true,
         max: 200
-      },
+      } as BasicSchemaOptions,
       {
         name: 'url',
         type: SchemaType.URL,
@@ -52,7 +52,7 @@ export const LinkSchema : CollectionSchema = {
         type: SchemaType.NUMBER,
         required: true,
         min: 0
-      },
+      } as BasicSchemaOptions,
       {
         name: 'isActive',
         type: SchemaType.BOOLEAN,
@@ -63,7 +63,7 @@ export const LinkSchema : CollectionSchema = {
         type: SchemaType.TEXT,
         required: false,
         max: 500 
-      }
+      } as BasicSchemaOptions
     ],
     indexes: [
       'CREATE INDEX idx_links_workspace ON links (workspace)',
