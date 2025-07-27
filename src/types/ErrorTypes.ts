@@ -1,6 +1,11 @@
-export interface AppError extends Error {
+export class AppError extends Error {
   statusCode: number;
   isOperational: boolean;
+
+  constructor(message: string){
+    super(message);
+    this.name = "AppError";
+  }
 }
 
 export class ValidationError extends Error {
