@@ -21,6 +21,7 @@ export interface Schema {
     name: string;
     required?: boolean | false;
     unique?: boolean;
+    defaultValue?: any;
 }
 
 export enum SchemaType {
