@@ -1,10 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { env } from './environment.js';
-import { logger } from '@/utils/logger.js';
-import { errorHandler } from '@/middleware/errorHandler.js';
-import { rateLimiter } from '@/middleware/rateLimiter.js';
+import { env } from './environment';
+import { logger } from '../utils/logger';
+import routes from '../routes';
 
 export function createServer(): express.Application {
   const app = express();
@@ -35,7 +34,7 @@ export function createServer(): express.Application {
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Rate limiting
-  app.use(rateLimiter);
+  //app.use(rateLimiter);
 
   // Request logging
   app.use((req, res, next) => {
@@ -57,10 +56,10 @@ export function createServer(): express.Application {
   });
 
   // API routes will be added here
-  // app.use('/api', routes);
+  app.use('/api', routes);
 
   // Error handling middleware (must be last)
-  app.use(errorHandler);
+  //app.use(errorHandler);
 
   return app;
 }
