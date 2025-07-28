@@ -1,5 +1,5 @@
 {
-  "name": "zenithurl",
+  "name": "blinkdesk",
   "version": "1.0.0",
   "description": "Open-source self-hosted workspace and link organizer",
   "main": "dist/index.js",
