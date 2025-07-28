@@ -12,7 +12,7 @@ const router = Router();
 // API version
 router.get('/', (req, res) => {
   res.json({
-    name: 'ZenithURL API',
+    name: 'BlinkDesk API',
     version: '1.0.0',
     description: 'Open-source self-hosted workspace and link organizer',
     endpoints: {
